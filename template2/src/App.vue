@@ -12,11 +12,12 @@
         app
         bottom
         color="black"
+        temporary
         dark
       >
         <v-list>
-          <v-list-item v-for="item in navi_list" :key="item.title">
-            <v-list-item-content to="item.to">
+          <v-list-item v-for="item in navi_list" :key="item.title" :to="item.to" @click="drawer = false">
+            <v-list-item-content>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
