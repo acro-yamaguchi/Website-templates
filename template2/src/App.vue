@@ -16,7 +16,7 @@
       >
         <v-list>
           <v-list-item v-for="item in navi_list" :key="item.title">
-            <v-list-item-content>
+            <v-list-item-content to="item.to">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -106,9 +106,9 @@ export default {
             ],
             drawer: false,
             navi_list: [
-              { title: 'TOP' },
-              { title: 'PAGE 2' },
-              { title: 'PAGE 3' },
+              { title: 'TOP', to:'/' },
+              { title: 'PAGE 1', to:'/page1'  },
+              { title: 'PAGE 2', to:'/page2'  },
             ],
         }),
 };
