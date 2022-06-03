@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <v-app-bar app color="rgba(0, 0, 0, 0.8)" height="56" dark>
+      <v-app-bar app color="rgba(0, 0, 0)" height="56" dark>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="fff"></v-app-bar-nav-icon>
         <v-toolbar-title class="headline">
             {{ title }}

@@ -1,110 +1,346 @@
 <template>
     <div>
         <v-main>
-          <v-container fluid class="pa-0">
-              <section id="section1">
-                  <v-row no-gutters justify="center">
-                      <v-col cols="12" class="text-center text-h3 mt-12">SECTION1</v-col>
-                      <v-col cols="10" class="text-center text-body-1 pre-line mb-12">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vestibulum eros quam. Praesent condimentum egestas massa ac gravida. Nam sed hendrerit turpis, id pharetra nulla. Quisque hendrerit velit accumsan tellus dictum rhoncus. Praesent in feugiat sapien. Nullam posuere augue non tempor porta. Duis varius est tellus, sit amet rhoncus massa accumsan id. Vestibulum mollis rutrum urna, eu scelerisque nibh dignissim ac. Proin ut rhoncus sapien, eu tristique orci. Suspendisse iaculis neque vitae nibh ullamcorper rutrum. Quisque at dui quis tellus sodales aliquet id nec erat. Donec metus erat, aliquam quis nulla non, tincidunt vestibulum sapien. Ut volutpat tincidunt felis, nec consequat lacus volutpat tempus.
-                          
-                          Pellentesque pellentesque vulputate ex, non rhoncus massa fringilla et. Proin dapibus ornare tortor, non malesuada lorem blandit ut. Nullam vehicula tortor et magna consectetur venenatis. Donec feugiat lorem non nisi posuere condimentum. Phasellus sed erat et lorem imperdiet convallis non eget erat. Curabitur nec rutrum justo. Sed et fringilla quam. Sed tincidunt aliquet nunc, in aliquet massa eleifend nec. Vivamus vulputate sodales nisl. Duis rutrum non tortor ac mattis. Aliquam viverra et erat quis porta. Pellentesque dignissim commodo nunc, scelerisque volutpat enim tempor nec. Fusce mattis nunc nisl, convallis pretium neque dapibus sed. Aenean non lorem sit amet mi placerat porttitor. Etiam iaculis, libero ac pellentesque consectetur, leo tellus bibendum justo, ac tempus sapien dolor sit amet enim.
-                      </v-col>        
-                  </v-row>
-              </section>
-
-              <section id="section2" class="grey lighten-3">
-                  <v-row no-gutters justify="center">
-                      <v-col cols="12" class="text-center text-h3 mt-12">SECTION2</v-col>
-                      <v-col cols="10" class="text-center text-body-1 pre-line mb-12">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor sed sem eu tempus. Vivamus et tristique magna, sed vehicula nunc. Etiam aliquet varius dui, vel consectetur risus. Pellentesque gravida elit eu enim gravida fringilla. In lorem risus, semper sed enim ut, posuere pulvinar justo. Ut dapibus tellus vehicula lacus finibus venenatis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis ornare urna est, non pulvinar est molestie at. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eu dapibus est. Aliquam pretium turpis purus, id bibendum tortor suscipit in. Integer sed quam id neque pretium sagittis vitae et dui. Morbi vehicula aliquam ex ac scelerisque.
-                      </v-col>        
-                  </v-row>
-              </section>
-
-              <section id="access" class="black">
-                  <v-row no-gutters justify="center">
-                      <v-col cols="12" class="text-center text-h3 my-12 white--text">ACCESS</v-col>
-                      <v-col cols="12" md="6" class="text-center white--text text-h6 pre-line pl-6 py-12">
-                          <span class="text-h5">株式会社サンプル</span>
-                          
-                          〒XXX-XXXX ○○県○○市○○区 X-X-X
-
-                          営業時間：10:00 - 17:00
-
-                          休業日：土日祝、年末年始
-
-                          TEL：XXXX-XX-XXXX
-                      </v-col>        
-                      <v-col cols="12" md="6" class="pl-6 pb-6 pr-6">
-                          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.6566075689298!2d139.80851171436308!3d35.71006703599915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188ed0d12f9adf%3A0x7d1d4fb31f43f72a!2z5p2x5Lqs44K544Kr44Kk44OE44Oq44O8!5e0!3m2!1sja!2sjp!4v1652861597044!5m2!1sja!2sjp" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                      </v-col>
-                  </v-row>
-              </section>
+          <v-container fluid>
+              <v-row justify="center">
+                  <v-col cols="12" md="10">
+                    <v-container class="mt-5 pa-0">
+                        <v-row justify='center'>
+                        <v-data-table
+                            :headers='headers'
+                            :items='news'
+                            hide-default-footer
+                            :items-per-page='-1'
+                            style="border: thin solid rgba(0, 0, 0, .12);"
+                            >
+                                <template v-slot:[`item.actions`]="{ item }">
+                                    <v-btn color='primary' @click.stop="editItem(item)">編集</v-btn>
+                                </template>
+                                <template v-slot:[`item.is_published`]="{ item }">
+                                    <v-simple-checkbox
+                                    v-model="item.publish_order"
+                                    disabled
+                                    ></v-simple-checkbox>
+                                </template>
+                                <template v-slot:[`item.is_put_on_list`]="{ item }">
+                                    <v-switch
+                                        v-model="item.put_on_list"
+                                        color="success"
+                                        @change="updatePut_on_list(item)"
+                                    ></v-switch>
+                                </template>
+                            </v-data-table>
+                        </v-row>
+                    </v-container>
+                    <v-dialog v-model="dialog" max-width="960">
+                        <v-card>
+                            <v-toolbar
+                                dark
+                                color="#b5e61d"
+                            >
+                                <v-btn icon dark @click.stop="dialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                                <v-toolbar-title>{{dialog_title}}</v-toolbar-title>                        
+                            </v-toolbar>
+                            <v-container class="mt-5">
+                                <v-row justify='center'>
+                                    <v-col cols="12">
+                                        <v-form ref="form">
+                                            <v-row justify="center">
+                                                <v-col cols="3" class="text-body-2 text-center cell_top remove_border-right">
+                                                    見出し<br>
+                                                    <span style="color: red; font-size: 12px;">※必須</span>
+                                                </v-col>
+                                                <v-col cols="7" class="cell_top">
+                                                    <v-text-field
+                                                    outlined
+                                                    dense
+                                                    v-model="editedItem.title"
+                                                    :rules="Rules"
+                                                    required
+                                                    ></v-text-field>
+                                                </v-col>
+                                                <v-col cols="3" class="text-body-2 text-center cell remove_border-right">
+                                                    概要<br>
+                                                    <span style="color: red; font-size: 12px;">※必須</span>
+                                                </v-col>
+                                                <v-col cols="7" class="cell">
+                                                    <v-text-field
+                                                    outlined
+                                                    dense
+                                                    v-model="editedItem.summary"
+                                                    :rules="Rules"
+                                                    required
+                                                    ></v-text-field>
+                                                </v-col>
+                                                <v-col cols="3" class="text-body-2 text-center cell remove_border-right">
+                                                    内容<br>
+                                                    <span style="color: red; font-size: 12px;">※必須</span>
+                                                </v-col>
+                                                <v-col cols="7" class="cell">
+                                                    <v-textarea
+                                                    outlined
+                                                    auto-grow
+                                                    v-model="editedItem.content"
+                                                    :rules="Rules"
+                                                    required
+                                                    ></v-textarea>
+                                                </v-col>
+                                                <v-col cols="3" class="text-body-2 text-center cell remove_border-right">
+                                                    画像<br>
+                                                    <span style="color: red; font-size: 12px;">※必須</span>
+                                                </v-col>
+                                                <v-col cols="7" class="cell">
+                                                    <image-input v-model="image"/>
+                                                </v-col>
+                                                <v-col cols="3" class="text-body-2 text-center cell remove_border-right">
+                                                    プレビュー<br>
+                                                </v-col>
+                                                <v-col cols="7" class="cell">
+                                                    <img v-if="image.src != null" class="dialog_img" :src="image.src">
+                                                    <img v-else class="dialog_img" :src="editedItem.image == null ? require('@/assets/news_img.jpg') : editedItem.image">
+                                                </v-col>
+                                                <v-col cols="3" class="text-body-2 text-center cell remove_border-right">
+                                                    削除
+                                                </v-col>
+                                                <v-col cols="7" class="cell">
+                                                    <v-btn dark block color='error' @click.stop="remove_dialog = true">
+                                                        記事の削除
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row justify="end" class="mt-6">
+                                                <v-btn
+                                                    color="success"
+                                                    large
+                                                    @click="submit"
+                                                    :loading="loading"
+                                                >保存</v-btn>
+                                            </v-row>
+                                        </v-form>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card>
+                    </v-dialog>
+                    <v-dialog width="300" v-model="remove_dialog">
+                        <v-card>
+                            <v-card-title class="text-center">本当に削除しますか？</v-card-title>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text color="#b5e61d" @click.stop="remove_dialog = false">
+                                    CANCEL
+                                </v-btn>
+                                <v-btn text color="#D33" @click.stop="remove">
+                                    OK
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                  </v-col>
+              </v-row>
           </v-container>
       </v-main>
     </div>
 </template>
 
 <script>
-import Img1 from "@/assets/img1.jpg"
-import Img2 from "@/assets/img2.jpg"
-import Img3 from "@/assets/img3.jpg"
-import Img4 from "@/assets/img4.jpg"
+import ImageInput from "../components/ImageInput.vue"
 
+import axios from 'axios'
 export default {
-  name: 'App',
-
-  data: () => ({
-            title: 'Sample2',
-            img_items: [
-                { src: Img1 },
-                { src: Img2 },
-                { src: Img3 },
-                { src: Img4 }
+    components: {
+        ImageInput,
+    },
+    data() {
+        return {
+            news: [],
+            headers: [
+                {
+                    text: 'ID',
+                    sortable: true,
+                    value: 'id',
+                    width: '15%',
+                    divider: true
+                },
+                { text: '見出し', sortable: false, value: 'title', width: '30%', divider: true },
+                { text: '概要', sortable: false, value: 'summary', width: '30%', divider: true },
+                { text: '公開中', sortable: true, value: 'is_published', width: '15%', divider: true, align: 'center' },
+                { text: '一覧', sortable: false, value: 'is_put_on_list', width: '15%', divider: true, align: 'center' },
+                { text: '編集', sortable: false, value: 'actions', width: '10%', divider: true, align: 'center' },
             ],
-            carousel_height: window.innerHeight,
-            top_div_style: {
-                width: '100%',
-                position: 'absolute',
-                top: '0px',
-                left: '0px',
-                height: window.innerHeight + 'px',
+            editedItem: {
+                id: null,
+                title: '',
+                summary: '',
+                content: '',
+                publish_order: null,
+                image: '',
+                put_on_list: null
             },
-            list_items: [
-                {
-                    icon: 'mdi-account-check',
-                    title: 'Title 1',
-                    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto cupiditate sint possimus quidem atque harum excepturi nemo velit tempora! Enim inventore fuga, qui ipsum eveniet facilis obcaecati corrupti asperiores nam.',
-                },
-                {
-                    icon: 'mdi-alarm-check',
-                    title: 'Title 2',
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor sed sem eu tempus. Vivamus et tristique magna, sed vehicula nunc. Etiam aliquet varius dui, vel consectetur risus. Pellentesque gravida elit eu enim.',
-                },
-                {
-                    icon: 'mdi-shield-check-outline',
-                    title: 'Title 3',
-                    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto cupiditate sint possimus quidem atque harum excepturi nemo velit tempora! Enim inventore fuga, qui ipsum eveniet facilis obcaecati corrupti asperiores nam.',
-                },
-                {
-                    icon: 'mdi-car-wash',
-                    title: 'Title 4',
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor sed sem eu tempus. Vivamus et tristique magna, sed vehicula nunc. Etiam aliquet varius dui, vel consectetur risus. Pellentesque gravida elit eu enim.',
-                },
+            title: '',
+            summary: '',
+            content: '',
+            image: {},
+            Rules: [
+                v => !!v || '入力必須です',
             ],
-            drawer: false,
-            navi_list: [
-              { title: 'TOP' },
-              { title: 'PAGE 2' },
-              { title: 'PAGE 3' },
-            ],
-        }),
-};
+            loading: false,
+            dialog: false,
+            dialog_title: 'お知らせの編集',
+            remove_dialog: false,
+            success: false
+        }
+    },
+    created() {
+        axios.get('./api/getAllNews.php').then((response) => {
+            this.news = response.data
+            for(let i = 0; i < this.news.length; i++){
+                this.news[i].publish_order = Boolean(this.news[i].publish_order) 
+                this.news[i].put_on_list = Boolean(this.news[i].put_on_list) 
+            }
+        })
+        this.success = false
+    },
+    methods: {
+        editItem(item){
+            this.editedItem = Object.assign({}, item)
+            this.dialog = true
+        },
+        remove() {
+            axios.post('./api/removeNews.php', { data : this.editedItem.id }).then((response) => {
+                if(response.data === 1){
+                    this.remove_dialog = false
+                    this.dialog = false
+                } else {
+                    alert("削除に失敗しました")
+                    this.remove_dialog = false
+                }
+                this.news = this.news.filter(item => item.id !== this.editedItem.id)
+            })
+        },
+        submit(){
+            if(this.$refs.form.validate()){
+                this.loading = true
+                if(this.image.src == null){
+                    this.storeNews(null, null)
+                } else {
+                    const img = this.image.src.replace(/^data:\w+\/\w+;base64,/, '')
+                    const fileExtension = this.image.src.toString().slice(this.image.src.indexOf('/') + 1, this.image.src.indexOf(';'))
+                    const date = new Date()
+                    const fileName = date.valueOf()
+                    const name = '' + fileName + '.' + fileExtension
+    
+                    this.storeNews(img, name)
+                }
+            }
+        },
+        storeImage(img, name){
+            let data = {
+                name: name,
+                image: img
+            }
+            axios.post('./api/storeImage.php', data).then(() => {
+                this.loading = false
+                this.updateNews()
+                this.displayMessage()
+                this.dialog = false
+            })
+        },
+        storeNews(img, name){
+            let data = {}
+            if(img == null){
+                data = {
+                    id: this.editedItem.id,
+                    title: this.editedItem.title,
+                    summary: this.editedItem.summary,
+                    content: this.editedItem.content,
+                    image: this.editedItem.image
+                }
+            } else {
+                const imageUrl = '../storage/' + name
+                data = {
+                    id: this.editedItem.id,
+                    title: this.editedItem.title,
+                    summary: this.editedItem.summary,
+                    content: this.editedItem.content,
+                    image: imageUrl
+                }
+            }
+            axios.post('./api/updateNews.php', data).then((response) => {
+                if(img != null){
+                    if(response.data) {
+                        this.storeImage(img, name)
+                    } else {
+                        alert('DB接続エラー')
+                        this.loading = false
+                    }               
+                } else {
+                    this.loading = false
+                    this.updateNews()
+                    this.displayMessage()
+                    this.dialog = false
+                }
+            })
+        },
+        updateNews() {
+            let editedIndex = this.news.findIndex(item => item.id === this.editedItem.id)
+            Object.assign(this.news[editedIndex], this.editedItem)
+        },
+        displayMessage(){
+            this.success = true
+            setTimeout(this.hideMessage, 2500)
+        },
+        hideMessage(){
+            this.success = false
+        },
+        updatePut_on_list(item) {
+            let data = {
+                id: item.id,
+                put_on_list: item.put_on_list
+            }
+            axios.post('./api/updatePutOnList.php', data)
+        }
+    }
+}
 </script>
 
 <style scoped>
-  .pre-line {
-    white-space: pre-line;
-  }
+.cell {
+  border: solid;
+  border-top: none;
+}
+
+.cell_top {
+  border: solid;
+}
+
+.remove_border-right {
+  border-right: none;
+}
+
+.dialog_img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.fade-enter-active {
+  transition: opacity 2s;
+  opacity: 0;
+}
+
+.fade-enter-to {
+  opacity: 1;
+}
+
+.fade-leave-active{
+    transition: opacity 2s;
+    opacity: 1;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

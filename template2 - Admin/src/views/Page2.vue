@@ -9,7 +9,7 @@
                             v-for="(item, i) in news"
                             :key="i"
                             cols="12"
-                            md="3"
+                            md="6"
                         >
                             <v-card flat class="py-3 px-2" color="grey lighten-4">
                                 <v-img src="@/assets/news_img.jpg"></v-img>
@@ -25,13 +25,39 @@
                                 ></v-card-text>
                                 <v-card-actions>
                                     <v-row justify="center">
-                                        <v-btn text>Read more</v-btn>
+                                        <v-btn text @click="readMore(item)">Read more</v-btn>
                                     </v-row>
                                 </v-card-actions>
                             </v-card>
                         </v-col>   
                     </v-row>
                 </v-container>
+
+                <v-dialog v-model="dialog" max-width="800">
+                    <v-card>
+                        <v-card-title class="text-h5">
+                            {{ dialog_news.title }}
+                            <v-img
+                            width="100%"
+                            :src="dialog_image === null ? require('@/assets/news_img.jpg') : dialog_image"
+                            contain
+                            />
+                        </v-card-title>
+                        <v-card-text style="white-space: pre-wrap;">
+                            {{ dialog_news.content }}
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                            color="#b5e61d"
+                            text
+                            @click.stop="dialog = false"
+                            >
+                            CLOSE
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </section>
         </v-main>
 
@@ -39,6 +65,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'App',
 
@@ -65,6 +92,19 @@ export default {
                     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor sed sem eu tempus.',
                 },
             ],
+            dialog: false,
+            dialog_news:{},
         }),
+    created() {
+        axios.get('./api/getNews.php').then((response) => {
+            this.news = response.data
+        })
+    },
+    methods: {
+        readMore(news) {
+            this.dialog_news = Object.assign({}, news)
+            this.dialog = true
+        }
+    }
 };
 </script>
